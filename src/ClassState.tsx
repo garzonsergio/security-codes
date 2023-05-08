@@ -6,13 +6,17 @@ interface ClassProps {
 }
 
 interface StateClass {
+  value: string;
   error: boolean;
   loading: boolean;
 }
+
+const SECURITY_CODE = "203559";
 class ClassState extends React.Component<ClassProps, StateClass> {
   constructor(props: ClassProps) {
     super(props);
     this.state = {
+      value: "",
       error: false,
       loading: false,
     };
@@ -34,7 +38,15 @@ class ClassState extends React.Component<ClassProps, StateClass> {
     if (this.state.loading) {
       setTimeout(() => {
         console.log("Validating");
-        this.setState(() => ({ loading: false }));
+        
+        if (this.state.value === SECURITY_CODE) {
+          this.setState(() => ({ loading: false, error: false }));
+        } else {
+          this.setState(() => ({
+            error: true,
+            loading: false,
+          }));
+        }
         console.log("Validation completed");
       }, 3000);
     }
@@ -44,9 +56,14 @@ class ClassState extends React.Component<ClassProps, StateClass> {
       <div>
         <h2>Eliminar {this.props.name}</h2>
         <p>Por favor ingresa el código de seguridad</p>
-        {this.state.error && <p>Error:El código es incorrecto</p>}
+        {this.state.error && !this.state.loading && (
+          <p>Error:El código es incorrecto</p>
+        )}
         {this.state.loading && <Loading />}
-        <input placeholder="Código de Seguridad" />
+        <input
+          placeholder="Código de Seguridad"
+          onChange={(e) => this.setState({ value: e.target.value })}
+        />
         <button
           onClick={() =>
             this.setState((prevState) => ({ loading: !prevState.loading }))
