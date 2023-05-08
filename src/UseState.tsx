@@ -8,6 +8,8 @@ interface AppState {
     error: boolean;
     loading: boolean;
     value: string | number;
+    deleted: boolean;
+    confirmed: boolean;
   };
   // error: boolean;
   // loading: boolean;
@@ -21,6 +23,8 @@ const UseState = ({ name }: UseProps) => {
     value: "",
     error: false,
     loading: false,
+    deleted: false,
+    confirmed: false,
   });
   // const [value, setValue] = React.useState<AppState["value"]>("");
   // const [error, setError] = React.useState<AppState["error"]>(false);
@@ -35,7 +39,7 @@ const UseState = ({ name }: UseProps) => {
         console.log("Validating");
         setState({ ...state, loading: false });
         if (state.value === SECURITY_CODE) {
-          setState({ ...state, loading: false, error: false });
+          setState({ ...state, loading: false, error: false, confirmed: true });
         } else {
           setState({ ...state, loading: false, error: true });
         }
@@ -50,23 +54,51 @@ const UseState = ({ name }: UseProps) => {
     setState({ ...state, value: e.target.value });
     console.log(e.target.value);
   };
-
-  return (
-    <div>
-      <h2>Eliminar {name}</h2>
-      <p>Por favor ingresa el código de seguridad</p>
-      {state.error && !state.loading && <p>Error:El código es incorrecto</p>}
-      {state.loading && <p>... Loading</p>}
-      <input
-        placeholder="Código de Seguridad"
-        value={state.value}
-        onChange={handleChange}
-      />
-      <button onClick={() => setState({ ...state, loading: true })}>
-        Comprobar
-      </button>
-    </div>
-  );
+  if (!state.deleted && !state.confirmed) {
+    return (
+      <div>
+        <h2>Eliminar {name}</h2>
+        <p>Por favor ingresa el código de seguridad</p>
+        {state.error && !state.loading && <p>Error:El código es incorrecto</p>}
+        {state.loading && <p>... Loading</p>}
+        <input
+          placeholder="Código de Seguridad"
+          value={state.value}
+          onChange={handleChange}
+        />
+        <button onClick={() => setState({ ...state, loading: true })}>
+          Comprobar
+        </button>
+      </div>
+    );
+  } else if (state.confirmed && !state.deleted) {
+    return (
+      <React.Fragment>
+        <p>¿Desea eliminar?</p>
+        <button onClick={() => setState({ ...state, deleted: true })}>
+          Si, eliminar
+        </button>
+        <button
+          onClick={() => setState({ ...state, confirmed: false, value: "" })}
+        >
+          No, descartar
+        </button>
+      </React.Fragment>
+    );
+  } else {
+    return (
+      <React.Fragment>
+        <p>Eliminado con éxito</p>
+        <button
+          onClick={() =>
+            setState({ ...state, confirmed: false, value: "", deleted: false })
+          }
+        >
+          Recuperar UseState
+        </button>
+      </React.Fragment>
+    );
+  }
 };
 
 export { UseState };
