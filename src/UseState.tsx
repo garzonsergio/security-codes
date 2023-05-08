@@ -1,19 +1,7 @@
 import React from "react";
+import { AppState } from "./types";
 interface UseProps {
   name: string;
-}
-
-interface AppState {
-  state: {
-    error: boolean;
-    loading: boolean;
-    value: string | number;
-    deleted: boolean;
-    confirmed: boolean;
-  };
-  // error: boolean;
-  // loading: boolean;
-  // value: string | number;
 }
 
 const SECURITY_CODE = "203559";
@@ -26,9 +14,7 @@ const UseState = ({ name }: UseProps) => {
     deleted: false,
     confirmed: false,
   });
-  // const [value, setValue] = React.useState<AppState["value"]>("");
-  // const [error, setError] = React.useState<AppState["error"]>(false);
-  // const [loading, setLoading] = React.useState<AppState["loading"]>(false);
+
   const onConfirm = () => {
     setState({ ...state, loading: false, confirmed: true, error: false });
   };
